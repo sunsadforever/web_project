@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <style>
+        .container {
+            display: grid;
+            width: 100%;
+            height: 100%;
+            grid-template-areas: "header-0 header-1 header-2"
+                "center center center"
+                "footer footer footer";
+            grid-template-columns: 240px 4fr 240px;
+            grid-template-rows: 300px 800px 80px;
+        }
+
+
+
+        .container>div {
+            border: none;
+        }
+
+        .header-0 {
+            grid-area: header-0;
+            position: fixed;
+            top: auto;
+            right: auto;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-size: 30px;
+        }
+
+        .header-1 {
+            grid-area: header-1;
+        }
+
+        .header-2 {
+            grid-area: header-2;
+            position: fixed;
+            top: auto;
+            right: 0%;
+        }
+
+        .center {
+            grid-area: center;
+        }
+
+        .footer {
+            grid-area: footer;
+            margin: 0 auto;
+        }
+
+
+        .child {
+            height: 200px;
+            padding: 5px;
+            outline: 5px solid black;
+            border: 10px solid brown;
+            width: 310px;
+            margin: 0 auto;
+            display: flex;
+        }
+
+        form {
+            width: 300px;
+            margin: 10px auto;
+        }
+
+        .right-form {
+            width: 300px;
+            margin-left: auto;
+            margin-right: 40px;
+        }
+
+        img[src*="book-removebg-preview"]:hover {
+            width: 70px;
+        }
+    </style>
+    <script>
+        function show(a) {
+            document.getElementsByClassName('header-0')[0].innerHTML = '書名:' + a.name + '<br>' + '書籍編號:' + a.id
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header-0"></div>
+        <div class="header-1" id="header">
+
+            <h2 style="text-align: center;">歡迎來到彩虹的小白馬書籍借閱系統</h2>
+            <h3 style="text-align: center;">滑鼠移到書籍來得知該書籍的名字和編號</h3>
+        </div>
+        <div class="header-2">
+            {% block content %}
+            <h1>借閱系統</h1>
+
+            {% if user.is_authenticated %}
+                <h3>歡迎，{{ user.username }}！</h3>
+                <p>會員等級：一般會員</p>
+            {% else %}
+                <h3>會員</h3>
+                <p><a href="members/new_member">註冊會員</a></p>
+                <p><a href="/login">登入</a></p>
+            {% endif %}
+
+            {% endblock %}
+
+            <form class="right-form">
+                <p>你要借閱哪本書呢?請輸入編號</p>
+                <p><input type="number" min="1" id="sen"></p>
+                <p><button type="button" width="30" onclick="alert('租借成功 ')">租借</button></p>
+            </form>
+        </div>
+        <div class="center">
+            <div class="out">
+                <div class="child">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="1" name="ch01_web.md"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="2" name="ch02_http"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="3" name="ch03_html"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="4" name="ch04_CSS"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="5" name="ch05_js"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="6" name="ch06_tailwind"
+                        onmouseover="show(this)">
+                </div>
+                <div class="child">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="7" name="ch07_UX"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="8" name="ch08_python"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="9" name="ch08s_python"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="10" name="ch09_db_intro"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="11" name="ch09_django"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="12" name="ch10_htmx"
+                        onmouseover="show(this)">
+                </div>
+                <div class="child">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="13" name="ch12_BS"
+                        onmouseover="show(this)">
+                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="14" name="ch13_Vue"
+                        onmouseover="show(this)">
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <a href="#header">回到最上方</a>
+        </div>
+    </div>
+    <script>
+        const imgs = document.querySelectorAll("img");
+        const target = Array.from(imgs).filter(img =>
+            img.getAttribute("src") === "{% static 'images/book-removebg-preview.png' %}"
+        );
+        let len = target.length;
+        const input = document.getElementById('sen')
+        input.max = len;
+    </script>
+
+
+
+</body>
+
+</html>

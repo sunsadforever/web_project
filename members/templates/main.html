@@ -1,0 +1,15 @@
+{% extends "master.html" %}
+
+{% block title %}
+My Tennis Club
+{% endblock %}
+
+
+{% block content %}
+<h1>My library</h1>
+
+<h3>Members</h3>
+
+<p>Check out all our <a href="members/">members</a></p>
+<a href="{% url 'library' %}">借書網站</a>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "master.html" %}
+
+{% block title %}
+    Input Form
+{% endblock %}
+
+{% block content %}
+<h1>Add New Members</h1>
+
+
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">註冊</button>
+</form>
+  
+{% endblock %}

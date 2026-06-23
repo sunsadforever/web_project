@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <h1>{{ mymember.firstname }} {{ mymember.lastname }}</h1>
+
+    <p>Phone: {{ mymember.phone }}</p>
+    <p>Member since: {{ mymember.joined_date }}</p>
+
+    <p>Back to <a href="/members">Members</a></p>
+
+    <form action="/members/delete/{{ mymember.id }}" method="post" onsubmit="return confirm('你確定要刪掉這個會員嗎？');">
+        {% csrf_token %}
+        <button type="submit">刪除會員</button>
+    </form>
+
+</body>
+
+</html>
