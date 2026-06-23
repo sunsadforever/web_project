@@ -30,7 +30,7 @@ def new_member(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("")  # 或你想去的頁面
+            return redirect("/")  # 或你想去的頁面
     else:
         form = RegisterForm()
 
