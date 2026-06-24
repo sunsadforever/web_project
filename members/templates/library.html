@@ -75,10 +75,86 @@
         img[src*="book-removebg-preview"]:hover {
             width: 70px;
         }
+
+        .book-shelf {
+            display: flex;
+            gap: 10px;
+            /* 書與書之間的間距 */
+            align-items: flex-end;
+        }
+
+        /* 每一本書的外觀 */
+        .book-item {
+            text-align: center;
+        }
+
+        /* 書背的樣式 */
+        .book-spine-img {
+            width: 60px;
+            /* 設定圖片寬度 */
+            height: auto;
+        }
     </style>
     <script>
         function show(a) {
-            document.getElementsByClassName('header-0')[0].innerHTML = '書名:' + a.name + '<br>' + '書籍編號:' + a.id
+            document.getElementsByClassName('header-0')[0].innerHTML =
+                '書名:' + a.name + '<br>' + '書籍編號:' + a.id;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie) {
+                document.cookie.split(';').forEach(c => {
+                    c = c.trim();
+                    if (c.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                    }
+                });
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        function borrow() {
+            const bookId = document.getElementById('sen').value;
+            if (!bookId) {
+                alert("沒有書本ID，你在借空氣？");
+                return;
+            }
+
+            // 使用 Django 模板語法自動產生正確路徑
+            // 確保這裡的 'borrow_book' 名稱與 urls.py 的 name 相符
+            const borrowUrl = "{% url 'borrow_book' %}";
+
+            fetch(borrowUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrftoken
+                },
+                body: new URLSearchParams({
+                    book_id: bookId
+                })
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("後端炸了，HTTP " + res.status);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert("借閱成功！");
+                        // 選做：如果借成功，可以隱藏該書或改變圖示樣式
+                        // location.reload(); // 簡單暴力的方法：刷新頁面更新狀態
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(err => {
+                    alert(err.message);
+                });
         }
     </script>
 </head>
@@ -94,74 +170,61 @@
         <div class="header-2">
             {% block content %}
             <h1>借閱系統</h1>
-
-            {% if user.is_authenticated %}
-                <h3>歡迎，{{ user.username }}！</h3>
-                <p>會員等級：一般會員</p>
-            {% else %}
-                <h3>會員</h3>
-                <p><a href="members/new_member">註冊會員</a></p>
-                <p><a href="/login">登入</a></p>
+            {% if user.is_staff %}
+            <p><a href="{% url 'add_book' %}">【管理員】新增書籍</a></p>
             {% endif %}
+            {% if user.is_authenticated %}
+            <h3>歡迎，{{ user.username }}！</h3>
+            <p>{{ user.member.role|title }}</p>
 
+            <form method="post" action="/logout/">
+                {% csrf_token %}
+                <button type="submit">登出</button>
+            </form>
+
+            {% else %}
+            <h3>會員</h3>
+            <p><a href="/members/new_member">註冊會員</a></p>
+            <p><a href="/login/">登入</a></p>
+            {% endif %}
             {% endblock %}
 
             <form class="right-form">
                 <p>你要借閱哪本書呢?請輸入編號</p>
                 <p><input type="number" min="1" id="sen"></p>
-                <p><button type="button" width="30" onclick="alert('租借成功 ')">租借</button></p>
+                <p><button type="button" width="30" onclick="borrow()">借書</button></p>
             </form>
         </div>
         <div class="center">
-            <div class="out">
-                <div class="child">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="1" name="ch01_web.md"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="2" name="ch02_http"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="3" name="ch03_html"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="4" name="ch04_CSS"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="5" name="ch05_js"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="6" name="ch06_tailwind"
-                        onmouseover="show(this)">
-                </div>
-                <div class="child">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="7" name="ch07_UX"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="8" name="ch08_python"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="9" name="ch08s_python"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="10" name="ch09_db_intro"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="11" name="ch09_django"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="12" name="ch10_htmx"
-                        onmouseover="show(this)">
-                </div>
-                <div class="child">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="13" name="ch12_BS"
-                        onmouseover="show(this)">
-                    <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="14" name="ch13_Vue"
-                        onmouseover="show(this)">
-                </div>
+            {% for book in books %}
+            {% if forloop.counter0|divisibleby:6 %}
+            <div class="child">
+                {% endif %}
+
+                <img src="{% static 'images/book-removebg-preview.png' %}" width="50" id="{{ book.id }}"
+                    name="{{ book.name }}" onmouseover="show(this)">
+
+                {% if forloop.counter|divisibleby:6 or forloop.last %}
             </div>
+            {% endif %}
+            {% endfor %}
         </div>
         <div class="footer">
             <a href="#header">回到最上方</a>
         </div>
     </div>
+
+    </div>
     <script>
-        const imgs = document.querySelectorAll("img");
-        const target = Array.from(imgs).filter(img =>
-            img.getAttribute("src") === "{% static 'images/book-removebg-preview.png' %}"
-        );
-        let len = target.length;
-        const input = document.getElementById('sen')
-        input.max = len;
+        document.addEventListener("DOMContentLoaded", function () {
+            const imgs = document.querySelectorAll("img[src*='book-removebg-preview']");
+            let len = imgs.length;
+            const input = document.getElementById('sen');
+            if (input) {
+                input.max = len;
+                console.log("書籍總數已設定為: " + len);
+            }
+        });
     </script>
 
 

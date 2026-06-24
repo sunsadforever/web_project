@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>新增書籍</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">確認新增</button>
+    </form>
+    <br>
+    <a href="{% url 'library' %}">返回圖書館列表</a>
+</body>
+</html>

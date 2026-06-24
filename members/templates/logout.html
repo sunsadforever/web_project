@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>已登出</title>
+</head>
+<body>
+    <h2>您已成功登出</h2>
+    <p>感謝您的使用。網頁將在 3 秒後自動跳轉至圖書館首頁...</p>
+    
+    <script>
+        setTimeout(function(){
+            window.location.href = "{% url 'library' %}";
+        }, 3000);
+    </script>
+    
+    <p>如果沒有自動跳轉，請 <a href="{% url 'library' %}">點擊這裡</a>。</p>
+</body>
+</html>
